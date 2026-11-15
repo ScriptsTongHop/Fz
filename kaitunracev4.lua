@@ -1,0 +1,24 @@
+getgenv().config = {
+    Key = "", -- Paste your key here
+    Language = "vi", -- "vi" / "en"
+    Enabled = true,
+    ["Auto Load"] = true, -- Reload script and restore this config after teleport.
+    FPS = 60,
+    TweenSpeed = 200, -- Maximum 200
+    Team = "Marines",
+    AutoTrial = true,
+    AutoUpgradeRace = true,
+    HelpGhoulV3 = false, -- Use the first two Help.Account usernames for Main's Ghoul V3 quest.
+    Main = {
+        Account = {""}, --Usernames/tài khoản ex/ví dụ: {"ccc","lol"}
+        Tier = 5,
+        Gear = "A-B-A", -- A = Red, B = Blue
+    },
+    Help = { Account = {"",""}, Reset = true},--Usernames/tài khoản ex/ví dụ: {"ccc","lol"}
+    Fruit = { Random = false, Store = false },
+    Webhook = { Enabled = false, Url = "", PingMode = "Không ping", UserId = "" },
+    trainingAreas = "Bone", -- "Bone" or "Cake"
+    HopNear = true, -- Hop when another player is within 500 studs during training
+    HopFullMoon = true, -- Hop to a Full Moon server when ready for Trial
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/realkidhub/realkid/refs/heads/main/RealKidKaiTunV4.lua"))()
