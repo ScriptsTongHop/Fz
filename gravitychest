@@ -1,0 +1,18 @@
+getgenv().GravityHub = {
+    ["Setting"] = {
+        ["Team"] = "Marines",
+        ["Stop Item"] = true,
+        ["Hop Server"] = true,
+        ["Speed Tween"] = 250
+    },
+    ["Other"] = {
+        ["Esp Chest"] = true,
+        ["White Screen"] = false,
+        ["Remove Notification"] = false
+    },
+    ["Webhook"] = {
+        ["Enabled"] = false,
+        ["WebhookUrl"] = ""
+    }
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-GravityHub/BloxFruits/refs/heads/main/FindChest.lua"))()
