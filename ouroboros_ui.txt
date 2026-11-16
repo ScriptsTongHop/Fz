@@ -1,0 +1,202 @@
+-- Library icons are inside source code, you can change them to any icon you want.
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local SCRIPT_NAME = "Example UI"
+local SCRIPT_VERSION = "v1.0"
+
+local Library
+local Window
+
+-- Load the UI library. If you want to put code on your github just open this url and copy paste it.
+local ok, result = pcall(function()
+    local url = "https://raw.githubusercontent.com/sixfourshi/Games/refs/heads/main/fip?cb=" .. tostring(os.time())
+    local chunk, compileErr = loadstring(game:HttpGet(url))
+    if type(chunk) ~= "function" then
+        error("library failed to compile: " .. tostring(compileErr), 0)
+    end
+    local lib = chunk()
+    if type(lib) ~= "table" then
+        error("library file did not return a table", 0)
+    end
+    return lib
+end)
+if not ok then
+    error("failed to load UI library: " .. tostring(result), 0)
+end
+Library = result
+
+Library:SetDefaultTheme("Rose")
+
+Window = Library:CreateWindow({
+    Name = SCRIPT_NAME,
+    LoadingSubtitle = SCRIPT_VERSION,
+    ToggleUIKeybind = "RightControl",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "ExampleUI",
+        FileName = "default",
+    },
+    ToggleButton = { Platform = "Mobile" },
+    Home = {
+        Title = "Welcome to " .. SCRIPT_NAME .. "!",
+        Tier = SCRIPT_VERSION,
+        Discord = "https://discord.gg/example", -- change this to your discord server
+        Website = "https://example.com", -- change this to your website
+        Stats = { "Players", "Session", "FPS", "Ping" },
+    },
+})
+
+local MainTab = Window:CreateTab({ Name = "Main", Icon = "house" })
+local ExtraTab = Window:CreateTab({ Name = "Extra", Icon = "layers" })
+local SettingsTab = Window:CreateTab({ Name = "Settings", Icon = "settings" })
+
+-- Main tab -----------------------------------------------------------------
+local Toggles = MainTab:AddLeftGroupbox({ Name = "Toggles", Icon = "toggle-left" })
+Toggles:CreateToggle({
+    Name = "Example Toggle",
+    CurrentValue = false,
+    Flag = "ExampleToggle",
+    Callback = function(value)
+        -- value is true/false
+    end,
+})
+Toggles:CreateToggle({
+    Name = "Another Toggle (on by default)",
+    CurrentValue = true,
+    Flag = "ExampleToggle2",
+    Callback = function(value) end,
+})
+
+local Sliders = MainTab:AddLeftGroupbox({ Name = "Sliders", Icon = "sliders-horizontal" })
+Sliders:CreateSlider({
+    Name = "Example Slider",
+    Range = { 0, 100 },
+    Increment = 1,
+    CurrentValue = 50,
+    Flag = "ExampleSlider",
+    Callback = function(value) end,
+})
+Sliders:CreateSlider({
+    Name = "Decimal Slider",
+    Range = { 0, 2 },
+    Increment = 0.1,
+    CurrentValue = 1,
+    Flag = "ExampleSlider2",
+    Callback = function(value) end,
+})
+
+local Buttons = MainTab:AddRightGroupbox({ Name = "Buttons", Icon = "mouse-pointer-click" })
+Buttons:CreateButton({
+    Name = "Example Button",
+    Callback = function()
+        Library:Notify({
+            Title = SCRIPT_NAME,
+            Content = "Button clicked!",
+            Type = "Info",
+            Duration = 3,
+        })
+    end,
+})
+Buttons:CreateButton({
+    Name = "Confirm Dialog Example",
+    Callback = function()
+        Library:Confirm({
+            Title = "Are you sure?",
+            ConfirmText = "Yes",
+            Callback = function() end,
+        })
+    end,
+})
+
+local Dropdowns = MainTab:AddRightGroupbox({ Name = "Dropdowns", Icon = "list" })
+Dropdowns:CreateDropdown({
+    Name = "Single Select",
+    Options = { "Option 1", "Option 2", "Option 3" },
+    CurrentOption = "Option 1",
+    AllowNone = false,
+    Flag = "ExampleDropdown",
+    Callback = function(option) end,
+})
+Dropdowns:CreateDropdown({
+    Name = "Multi Select",
+    Options = { "Red", "Green", "Blue", "Yellow" },
+    MultipleOptions = true,
+    CurrentOption = {},
+    Flag = "ExampleMultiDropdown",
+    Callback = function(options) end,
+})
+
+-- Extra tab ----------------------------------------------------------------
+local Keys = ExtraTab:AddLeftGroupbox({ Name = "Keybinds", Icon = "keyboard" })
+Keys:CreateKeybind({
+    Name = "Example Keybind",
+    CurrentKeybind = "E",
+    Flag = "ExampleKeybind",
+    Callback = function() end,
+    OnChanged = function(key) end,
+})
+
+local Status = ExtraTab:AddRightGroupbox({ Name = "Status", Icon = "activity" })
+Status:CreateStatusList({
+    Name = "Example Status",
+    MaxRows = 3,
+    UpdateRate = 1,
+    Update = function()
+        return {
+            { Text = "Row 1", Value = "Value" },
+            { Text = "Row 2", Value = "Value" },
+            { Text = "Row 3", Value = "Value" },
+        }
+    end,
+})
+
+-- Settings tab -------------------------------------------------------------
+local Menu = SettingsTab:AddLeftGroupbox({ Name = "Menu", Icon = "monitor" })
+Menu:CreateKeybind({
+    Name = "Toggle UI",
+    CurrentKeybind = "RightControl",
+    Flag = "ToggleUIKey",
+    Callback = function() end,
+    OnChanged = function(key)
+        Window:SetKeybind(key)
+    end,
+})
+Menu:CreateDropdown({
+    Name = "Toggle button",
+    Options = { "Mobile only", "Mobile & PC" },
+    CurrentOption = "Mobile only",
+    AllowNone = false,
+    Flag = "ToggleButtonPlatform",
+    Callback = function(option)
+        local choice = type(option) == "table" and option[1] or option
+        Window:SetToggleButtonPlatform(choice == "Mobile & PC" and "Both" or "Mobile")
+    end,
+})
+Menu:CreateButton({
+    Name = "Unload UI",
+    Icon = "power",
+    Callback = function()
+        Library:Confirm({
+            Title = "Unload?",
+            ConfirmText = "Unload",
+            Callback = function()
+                Window:Destroy()
+            end,
+        })
+    end,
+})
+
+SettingsTab:CreateConfigManager({ Name = "Configs", Side = "Left" })
+SettingsTab:CreateThemeManager({ Name = "Themes", Side = "Right" })
+
+-- Restore saved settings (must come after all controls are created)
+Window:LoadAutoload()
+
+Library:Notify({
+    Title = SCRIPT_NAME,
+    Content = "Loaded successfully.",
+    Type = "Success",
+    Duration = 3,
+})
